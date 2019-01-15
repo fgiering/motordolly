@@ -1,10 +1,18 @@
 #include <NewTone.h>
-#include <Stepper.h>
+//#include <Stepper.h>
 #include <IRremote.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <AccelStepper.h>
 
+//Sound pin
 #define TONE_PIN 7
+// Motor pins
+#define HALFSTEP 8
+#define motorPin1  2
+#define motorPin2  3
+#define motorPin3  4
+#define motorPin4  5
 
 //LED
 int LEDr = 9;
@@ -16,7 +24,8 @@ int brightness = 150;
 int nextmenustep = 0;
 int menustep = 0; // 1= dolly{10=direction, 11=speed, 12=range}, 2=timelapse{20=shots, 21=interval, 22=length}
 int movedirection = 0; //0=neutral, 1=forward, 2=back;
-const int movespeed = 15 / 9; //rpm (rounds per minute) (max = 15)
+int fullSpeed = 900.0;
+const int movespeed = fullSpeed / 9; //rpm (rounds per minute) (max = 15 /9 at Stepper.h)
 const int movesteps = 2048 / 8; //2048 = 1 Umdrehung
 boolean cancel = false;
 long rideArray[3] = {movedirection, movespeed, movesteps}; //{movedirection, movespeed, movesteps} or Timelapse {shots,interval,length}
@@ -25,7 +34,8 @@ long numArray [4]; //for 4-digit NumberInputs
 
 //Motor
 int SPU = 2048;
-Stepper Motor(SPU, 3, 5, 4, 6);
+//Stepper Motor(SPU, 3, 5, 4, 6);
+AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 
 //IR-Remote
 int IRmodul = 8;
@@ -42,27 +52,26 @@ void setup()
   pinMode(LEDr, OUTPUT);
   pinMode(LEDg, OUTPUT);
   pinMode(LEDb, OUTPUT);
-  Motor.setSpeed(5);
+  
+  //Motor.setSpeed(5);
+  stepper.setAcceleration(80.0);
+  
   lcd.init();
   lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("[*] Dollyshot");
+  lcd.setCursor(0, 1);
+  lcd.print("[ ] Timelapse");
+  nextmenustep = 10;
 }
 
 void loop() {
   int keyvalue = 0;
-  //lcd.setCursor(0, 0);
-  //lcd.print("Motorized Skater Dolly");
-  //lcd.setCursor(0, 1);
-  //lcd.print("Los gehts!");
   cancel = false;
 
   //Menu Structure
   switch (menustep) {
     case 0:
-      //Serial.println("Dolly oder Timelapse? Up/Down/Play");
-      /*lcd.setCursor(0, 0);
-      lcd.print("[*] Dollyshot");
-      lcd.setCursor(0, 1);
-      lcd.print("[ ] Timelapse");*/
       keyvalue = recieveIR();
       switch (keyvalue) {
         case 9:
@@ -92,7 +101,6 @@ void loop() {
     //Dollymenu
     case 10: //dolly - direction
       analogWrite(LEDb, brightness);
-      //Serial.println("Which direction to move? (vol +/-)");
       lcd.setCursor(0, 0);
       lcd.print("Which direction to move? (vol +/-)");
       keyvalue = recieveIR();
@@ -118,11 +126,9 @@ void loop() {
     case 11: //dolly - speed
       analogWrite(LEDb, brightness);
       analogWrite(LEDg, brightness);
-      //Serial.println("How fast to move? (r per min)");
       lcd.setCursor(0, 0);
       lcd.print("How fast to move? (r per min)");
       keyvalue = recieveIR();
-      //Serial.println(keyvalue);
       switch (keyvalue) {
         case 13: //key: 1
           rideArray[1] = movespeed * 1;
@@ -167,7 +173,6 @@ void loop() {
       analogWrite(LEDb, brightness);
       analogWrite(LEDg, brightness);
       analogWrite(LEDr, brightness);
-      //Serial.println("How far to move? (in eigth-steps)");
       lcd.setCursor(0, 0);
       lcd.print("How far to move? (in eigth-steps)");
       keyvalue = recieveIR();
@@ -327,8 +332,13 @@ void moveDolly(int movedirection, int movespeed, int movesteps) {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Driving...");
-  Motor.setSpeed(movespeed);
-  Motor.step(movesteps); // Der Motor macht 2048 Schritte, das entspricht einer Umdrehung.
+  stepper.setMaxSpeed(movespeed);
+  stepper.move(movesteps);
+  while (stepper.distanceToGo() != 0) {
+    stepper.run();  
+  }
+  //Motor.setSpeed(movespeed);
+  //Motor.step(movesteps); // Der Motor macht 2048 Schritte, das entspricht einer Umdrehung.
   analogWrite(LEDg, 0);
   analogWrite(LEDr, 0);
   piep();
@@ -378,13 +388,13 @@ void repeatMovement() {
 void moveTimelapse (int shotcount, int interval, int movesteps) {
   int shotsDone = 0;
   unsigned long preMillis = millis();
-  moveDolly(1, 12, movesteps);
+  moveDolly(1, fullSpeed, movesteps);
   shotsDone++;
   while (!cancel && shotsDone < shotcount) {
     if (millis() - preMillis >= interval) {
       // for (int i = 0; i < shotcount; i++) {
       preMillis = millis();
-      moveDolly(1, 12, movesteps);
+      moveDolly(1, fullSpeed, movesteps);
       shotsDone++;
       // }
     } else {
