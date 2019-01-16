@@ -23,7 +23,7 @@ int brightness = 100;
 int keyvalue = 0;
 int nextmenustep = 0;
 int menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}
-int movedirection = 0; //0=forward, 1=back;
+int movedirection = 0; //0=forwards, 1=backwards;
 int fullSpeed = 900.0;
 const int movespeed = fullSpeed / 9; //rpm (rounds per minute) (max = 15 /9 at Stepper.h)
 const int movesteps = 2048 / 8; //2048 = 1 Umdrehung
@@ -33,7 +33,7 @@ int numArray [4] = {0, 0, 0, 1}; //for 4-digit NumberInputs
 const int numScreens = 10;
 String menuscreens[numScreens][2][3] = {
   {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}},
-  {{"Direction", ""}, {"forward", "backwards"}}, //dolly 1
+  {{"Direction", ""}, {"forwards", "backwards"}}, //dolly 1
   {{"Duration", "s"}, {"", ""}},         //dolly 2
   {{"Distance", "cm"}, {"", ""}},          //dolly 3
   {{"Shots", "shots"}, {"", ""}},         //timelapse 4
@@ -267,20 +267,21 @@ void inputAction (int selection) {
           numberInput();
           break;
         case 5:
-          lcd.setCursor(0, 0);
-          lcd.print("Want to start?");
-          lcd.setCursor(0, 1);
-          lcd.print(parameters[4]);
-          lcd.print("shots  ");
-          lcd.print(parameters[5]);
-          lcd.print("ms  ");
-          lcd.print(parameters[6]);
-          lcd.print("cm");
-          if (selection == 5) {
-            moveTimelapse(parameters[4], parameters[5], parameters[6]);
-            reset();
+          switch (selection) {
+            default:
+              lcd.setCursor(0, 0);
+              lcd.print("Want to start?");
+              lcd.setCursor(0, 1);
+              lcd.print(parameters[4]);
+              lcd.print("shots  ");
+              lcd.print(parameters[5]);
+              lcd.print("ms  ");
+              lcd.print(parameters[6]);
+              lcd.print("cm");
+            case 5:
+              moveTimelapse(parameters[4], parameters[5], parameters[6]);
+              reset();
           }
-          break;
       }
       break;
     case 7: //setup - Sound
@@ -322,7 +323,6 @@ void inputAction (int selection) {
           break;
       }
       break;
-
   }
 }
 
@@ -427,8 +427,6 @@ void moveDolly(int movedirection, int movespeed, int movesteps) {
       recieveIR();
     }
   }
-  //Motor.setSpeed(movespeed);
-  //Motor.step(movesteps); // Der Motor macht 2048 Schritte, das entspricht einer Umdrehung.
   analogWrite(LEDg, 0);
   analogWrite(LEDr, 0);
   piep();
@@ -440,10 +438,10 @@ void repeatMovement() {
   boolean repeat = true;
   boolean input = true;
   lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Want to repeat?");
-  while (repeat) {
+  while (repeat && !cancel) {
     int keyvalue = recieveIR();
+    lcd.setCursor(0, 0);
+    lcd.print("Want to repeat?");
     switch (keyvalue) {
       case 7:
         lcd.setCursor(0, 1);
@@ -482,11 +480,9 @@ void moveTimelapse (int shotcount, int interval, int movesteps) {
   shotsDone++;
   while (!cancel && shotsDone < shotcount) {
     if (millis() - preMillis >= interval) {
-      // for (int i = 0; i < shotcount; i++) {
       preMillis = millis();
       moveDolly(1, fullSpeed, movesteps);
       shotsDone++;
-      // }
     } else {
       lcd.setCursor(0, 0);
       lcd.print("Timelapse - Standby");
@@ -496,6 +492,7 @@ void moveTimelapse (int shotcount, int interval, int movesteps) {
       recieveIR();
     }
   }
+  shotcount = 0;
   for (int i = 0; i <= 5; i++) { //timelapse ended alarm
     piep();
     delay (50);
@@ -505,9 +502,7 @@ void moveTimelapse (int shotcount, int interval, int movesteps) {
 
 void numberInput () {
   for (int i = 0; i <= 3; i++) {
-    Serial.println("itteration");
-    Serial.println(i);
-    lcd.setCursor(2, 1+i);
+    lcd.setCursor(2 + i, 1);
     lcd.blink();
     int tempinput = 0;
     while (tempinput == 0) {
@@ -522,11 +517,10 @@ void numberInput () {
       }
     }
     parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
-    lcd.noBlink();
     printScreen();
-    delay(100);
+    delay(200);
   }
-  
+  lcd.noBlink();
   for (int i = 0; i < sizeof(numArray); ++i) {//reset Array for new
     numArray[i] = 0;
   }
