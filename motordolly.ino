@@ -92,11 +92,6 @@ void loop() {       //Main Function
     inputAction(keyvalue);
     printScreen();
   }
-  if (keyvalue == 1) {
-    cancel = true;
-    stepper.stop();
-    reset();
-  }
   //getNewInput = true;
 }
 
@@ -108,6 +103,8 @@ int recieveIR() {     //Function to recieve IR-Codes from the Remote
   }
   switch (recieved.value) {
     case 16753245: //key on Remote: power
+      cancel = true;
+      reset();
       return (1);
       break;
     case 16736925: //key on Remote: vol+
@@ -237,11 +234,11 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5: //enter starts drive
-          if (parameters[1] != 0 && parameters[2] != 0 && parameters[3]) {
-          parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
-          parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
-          moveDolly(parameters[1], parameters[2], parameters[3]);
-          changeMenuStep(10); //to repeatMovement
+          if (parameters[2] != 0 && parameters[3]) {
+            parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
+            parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+            moveDolly(parameters[1], parameters[2], parameters[3]);
+            changeMenuStep(10); //to repeatMovement
           } else {
             changeMenuStep(0);
           }
@@ -386,8 +383,10 @@ void printScreen() { //Function to print text from the menuscreens Array on the 
 }
 
 void reset() { //Function to Reset all e.g. after canceling
-  cancel = false;
+  stepper.stop();
+  delay(300);
   changeMenuStep(0);
+  cancel = false;
 }
 
 void piep(int times, int waitTime) { //function to piep the speaker with Parameters 1-how often 2-how long to wait between in ms
@@ -402,6 +401,7 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
         pieped++;
         preMillis = millis();
       }
+      recieveIR(); 
     } while (!cancel && pieped < times);
   }
 }
@@ -425,10 +425,10 @@ void ledOn (char color) { //function to turn on an LED Color with Parameter 1- w
 void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
   menustep = newStep;
   if (parameters[menustep] > 9) {
-    char buffer[6];
-    itoa(parameters[menustep], buffer, 10);
+    char buf[4];
+    itoa(parameters[menustep], buf, 10);
     for (int i = 0; i < sizeof(numArray); ++i) {//request parameters for numArray
-      numArray[i] = buffer[i];
+      numArray[i] = buf[i];
     }
   } else {
     for (int i = 0; i < sizeof(numArray); ++i) {//or reset numArray
@@ -512,8 +512,8 @@ void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to 
         lcd.print(" shots in ");
         lcd.print((interval - (millis() - preMillis)) / 1000);
         lcd.print("s");
-        recieveIR();
       }
+      recieveIR();
     } while (!cancel && shotsDone < shotCount);
     shotCount = 0;
     piep(5, 200); //timelapse ended alarm
