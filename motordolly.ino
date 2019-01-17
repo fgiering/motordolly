@@ -33,7 +33,7 @@ String menuscreens[numScreens][2][3] = {
   {{"Duration", "s"}, {"", ""}},         //dolly 2
   {{"Distance", "cm"}, {"", ""}},          //dolly 3
   {{"Shots", "shots"}, {"", ""}},         //timelapse 4
-  {{"Interval", "ms"}, {"", ""}},         //timelapse 5
+  {{"Interval", "s"}, {"", ""}},         //timelapse 5
   {{"Distance", "cm"}, {"", ""}},           //timelapse 6
   {{"Sound", ""}, {"On", "Off"}},    //setup 7
   {{"LED", ""}, {"On", "Off"}},       //setup 8
@@ -76,35 +76,38 @@ void setup()
   lcd.init();
   lcd.backlight();
 
-  for (int i = 0; i < numScreens; i++) {
+  for (int i = 0; i < numScreens; i++) { //Reset all parameters to 0
     parameters[i] = 0;
   }
 
   printScreen();
+  piep(3, 50);
 }
 
 void loop() {       //Main Function
-  if (getNewInput) {
-    keyvalue = recieveIR();
-  }
-  if (keyvalue != 0) {
+  //if (getNewInput) {
+  keyvalue = recieveIR();
+  //}
+  if (keyvalue != 0 && keyvalue != 1) {
     inputAction(keyvalue);
     printScreen();
   }
-  getNewInput = true;
+  if (keyvalue == 1) {
+    cancel = true;
+    stepper.stop();
+    reset();
+  }
+  //getNewInput = true;
 }
 
 int recieveIR() {     //Function to recieve IR-Codes from the Remote
   if (irrec.decode(&recieved)) {
     Serial.println(recieved.value, DEC);
-    getNewInput = false;
     irrec.resume();
+    //getNewInput = false;
   }
   switch (recieved.value) {
     case 16753245: //key on Remote: power
-      cancel = true;
-      stepper.stop();
-      reset();
       return (1);
       break;
     case 16736925: //key on Remote: vol+
@@ -234,11 +237,14 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5: //enter starts drive
+          if (parameters[1] != 0 && parameters[2] != 0 && parameters[3]) {
           parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
           parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
           moveDolly(parameters[1], parameters[2], parameters[3]);
-          changeMenuStep(10);
-          //repeatMovement();
+          changeMenuStep(10); //to repeatMovement
+          } else {
+            changeMenuStep(0);
+          }
           break;
       }
       break;
@@ -286,7 +292,7 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
               Serial.println(parameters[5]);
               Serial.println(parameters[6]);
               moveTimelapse(parameters[4], parameters[5], parameters[6]);
-              reset();
+              changeMenuStep(0);
           }
       }
       break;
@@ -380,22 +386,21 @@ void printScreen() { //Function to print text from the menuscreens Array on the 
 }
 
 void reset() { //Function to Reset all e.g. after canceling
-  changeMenuStep(0);
-  printScreen();
   cancel = false;
+  changeMenuStep(0);
 }
 
 void piep(int times, int waitTime) { //function to piep the speaker with Parameters 1-how often 2-how long to wait between in ms
-  unsigned long preMillis = millis();
+  unsigned long preMillis = 0;
   int pieped = 0;
   if (parameters[7] == 0) {
     do {
       if (millis() - preMillis >= waitTime) {
-        preMillis = millis();
         NewTone(TONE_PIN, 125);
-        delay(200);
+        delay(300);
         noNewTone(TONE_PIN);
         pieped++;
+        preMillis = millis();
       }
     } while (!cancel && pieped < times);
   }
@@ -419,10 +424,18 @@ void ledOn (char color) { //function to turn on an LED Color with Parameter 1- w
 
 void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
   menustep = newStep;
-  for (int i = 0; i < sizeof(numArray); ++i) {//reset numArray for new numberInput
-    numArray[i] = 0;
+  if (parameters[menustep] > 9) {
+    char buffer[6];
+    itoa(parameters[menustep], buffer, 10);
+    for (int i = 0; i < sizeof(numArray); ++i) {//request parameters for numArray
+      numArray[i] = buffer[i];
+    }
+  } else {
+    for (int i = 0; i < sizeof(numArray); ++i) {//or reset numArray
+      numArray[i] = 0;
+    }
   }
-  piep(1,0);
+  piep(1, 0);
   analogWrite(LEDb, 0);
   analogWrite(LEDg, 0);
   analogWrite(LEDr, 0);
@@ -446,75 +459,80 @@ void changeParameter(int values) { //function to change a Parameter in the Param
 
 
 void moveDolly(int movedirection, int movespeed, int movesteps) { //function to move the Motor with Parameters
-  analogWrite(LEDr, 0);
-  analogWrite(LEDg, 0);
-  analogWrite(LEDb, 0);
-  if (movedirection == 0) {
-    ledOn('g');
-  }
-  else if (movedirection == 1) {
-    movesteps = 0 - movesteps;
-    ledOn('r');
-  }
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Driving...");
-  stepper.setMaxSpeed(movespeed);
-  stepper.move(movesteps);
-  if (parameters[9] == 1) {
-    stepper.setSpeed(movespeed);
-    while (stepper.distanceToGo() != 0 && !cancel) {
-      stepper.runSpeed();
-      recieveIR();
+  if (movespeed != 0 && movesteps != 0 && !cancel) {
+    analogWrite(LEDr, 0);
+    analogWrite(LEDg, 0);
+    analogWrite(LEDb, 0);
+    if (movedirection == 0) {
+      ledOn('g');
     }
-  } else {
-    while (stepper.distanceToGo() != 0 && !cancel) {
-      stepper.run();
-      recieveIR();
+    else if (movedirection == 1) {
+      movesteps = 0 - movesteps;
+      ledOn('r');
     }
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Driving...");
+    stepper.setMaxSpeed(movespeed);
+    stepper.move(movesteps);
+    if (parameters[9] == 1) {
+      stepper.setSpeed(movespeed);
+      while (stepper.distanceToGo() != 0 && !cancel) {
+        stepper.runSpeed();
+        recieveIR();
+      }
+    } else {
+      while (stepper.distanceToGo() != 0 && !cancel) {
+        stepper.run();
+        recieveIR();
+      }
+    }
+    analogWrite(LEDg, 0);
+    analogWrite(LEDr, 0);
+    piep(2, 100);
   }
-  analogWrite(LEDg, 0);
-  analogWrite(LEDr, 0);
-  piep(2, 100);
 }
 
 void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to move the Motor more times and with an interval
-  movesteps = movesteps * stepsPerCm; //movesteps needs to be calculatet from cm to steps
-  int shotsDone = 0;
-  unsigned long preMillis = millis();
-  do {
-    if (millis() - preMillis >= interval) {
-      preMillis = millis();
-      moveDolly(1, fullSpeed, movesteps);
-      shotsDone++;
-    } else {
-      lcd.setCursor(0, 0);
-      lcd.print("Timelapse - Standby");
-      lcd.setCursor(0, 1);
-      lcd.print("Shots left: ");
-      lcd.print(shotCount - shotsDone);
-      recieveIR();
-    }
-  } while (!cancel && shotsDone < shotCount);
-  shotCount = 0;
-  piep(5, 50); //timelapse ended alarm
-
+  if (shotCount != 0 && interval != 0 && movesteps != 0 && !cancel) {
+    movesteps = movesteps * stepsPerCm; //movesteps needs to be calculatet from cm to steps
+    interval = interval * 1000; //calc interval from seconds to ms
+    int shotsDone = 0;
+    unsigned long preMillis = 0;
+    do {
+      if (millis() - preMillis >= interval) {
+        preMillis = millis();
+        moveDolly(1, fullSpeed, movesteps);
+        shotsDone++;
+      } else {
+        lcd.setCursor(0, 0);
+        lcd.print("Timelapse - Wait");
+        lcd.setCursor(0, 1);
+        lcd.print(shotCount - shotsDone);
+        lcd.print(" shots in ");
+        lcd.print((interval - (millis() - preMillis)) / 1000);
+        lcd.print("s");
+        recieveIR();
+      }
+    } while (!cancel && shotsDone < shotCount);
+    shotCount = 0;
+    piep(5, 200); //timelapse ended alarm
+  }
 }
 
 
 void numberInput () { //Function to input 4-digit numbers with remote an display it on Screen
-  for (int i = 0; i <= 3; i++) {
+  lcd.blink();
+  for (int i = 0; i <= 3 && !cancel; i++) {
     lcd.setCursor(2 + i, 1);
-    lcd.blink();
     int tempinput = 0;
-    while (tempinput == 0) {
+    while (tempinput == 0 && !cancel) {
       tempinput = recieveIR();
       if (tempinput < 22 && tempinput > 12) {
         numArray[i] = tempinput - 12;
       } else if (tempinput == 10) {
         numArray[i] = 0;
-      }
-      else {
+      } else {
         tempinput = 0;
       }
     }
