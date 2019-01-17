@@ -14,21 +14,16 @@
 #define motorPin4  5
 
 //LED Pins
-int LEDr = 9;
-int LEDg = 10;
-int LEDb = 6;
+const int LEDr = 9;
+const int LEDg = 10;
+const int LEDb = 6;
 int brightness = 100;
 
 //Menu
 int keyvalue = 0;
 int nextmenustep = 0;
 int menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}
-int movedirection = 0; //0=forwards, 1=backwards;
-int fullSpeed = 900.0;
-const int movespeed = fullSpeed / 9; //rpm (rounds per minute) (max = 15 /9 at Stepper.h)
-const int movesteps = 2048 / 8; //2048 = 1 Umdrehung
 boolean cancel = false;
-long rideArray[3] = {movedirection, movespeed, movesteps}; //{movedirection, movespeed, movesteps} or Timelapse {shots,interval,distance}
 int numArray [4] = {0, 0, 0, 1}; //for 4-digit NumberInputs
 const int numScreens = 10;
 String menuscreens[numScreens][2][3] = {
@@ -47,7 +42,11 @@ int parameters[numScreens];
 
 //Motor
 AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
-int stepsPerCm = 2048;
+const int stepsPerCm = 450;
+const int fullSpeed = 900.0;
+int movedirection = 0; //0=forwards, 1=backwards;
+//const int movespeed = fullSpeed; //rpm (rounds per minute) (max = 15 /9 at Stepper.h)
+//const int movesteps = 0; //64 = 1 Umdrehung
 
 //IR-Remote
 int IRmodul = 8;
@@ -233,7 +232,8 @@ void inputAction (int selection) {
           numberInput();
           break;
         case 5: //enter starts drive
-          parameters[2] = parameters[3] * stepsPerCm / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+          parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
+          parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
           moveDolly(parameters[1], parameters[2], parameters[3]);
           repeatMovement();
           break;
@@ -279,6 +279,9 @@ void inputAction (int selection) {
               lcd.print(parameters[6]);
               lcd.print("cm");
             case 5:
+              Serial.println(parameters[4]);
+              Serial.println(parameters[5]);
+              Serial.println(parameters[6]);
               moveTimelapse(parameters[4], parameters[5], parameters[6]);
               reset();
           }
@@ -326,7 +329,7 @@ void inputAction (int selection) {
   }
 }
 
-void printScreen () {
+void printScreen() {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(menuscreens[menustep][0][0]);
@@ -338,7 +341,10 @@ void printScreen () {
   }
   else
   {
-    lcd.print(parameters[menustep]);
+    lcd.print(numArray[0]);
+    lcd.print(numArray[1]);
+    lcd.print(numArray[2]);
+    lcd.print(numArray[3]);
     lcd.print(" ");
     lcd.print(menuscreens[menustep][0][1]);
   }
@@ -376,6 +382,9 @@ void ledOn (char color) {
 
 void changeMenuStep(int newStep) {
   menustep = newStep;
+  for (int i = 0; i < sizeof(numArray); ++i) {//reset numArray for new numberInput
+    numArray[i] = 0;
+  }
   piep();
   analogWrite(LEDb, 0);
   analogWrite(LEDg, 0);
@@ -472,13 +481,11 @@ void repeatMovement() {
   reset();
 }
 
-void moveTimelapse (int shotcount, int interval, int movesteps) {
+void moveTimelapse (int shotCount, int interval, int movesteps) {
   movesteps = movesteps * stepsPerCm; //movesteps needs to be calculatet from cm to steps
   int shotsDone = 0;
   unsigned long preMillis = millis();
-  moveDolly(1, fullSpeed, movesteps);
-  shotsDone++;
-  while (!cancel && shotsDone < shotcount) {
+  do {
     if (millis() - preMillis >= interval) {
       preMillis = millis();
       moveDolly(1, fullSpeed, movesteps);
@@ -488,11 +495,11 @@ void moveTimelapse (int shotcount, int interval, int movesteps) {
       lcd.print("Timelapse - Standby");
       lcd.setCursor(0, 1);
       lcd.print("Shots left: ");
-      lcd.print(shotcount - shotsDone);
+      lcd.print(shotCount - shotsDone);
       recieveIR();
     }
-  }
-  shotcount = 0;
+  } while (!cancel && shotsDone < shotCount);
+  shotCount = 0;
   for (int i = 0; i <= 5; i++) { //timelapse ended alarm
     piep();
     delay (50);
@@ -516,12 +523,9 @@ void numberInput () {
         tempinput = 0;
       }
     }
-    parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
     printScreen();
-    delay(200);
+    delay(50);
+    lcd.noBlink();
   }
-  lcd.noBlink();
-  for (int i = 0; i < sizeof(numArray); ++i) {//reset Array for new
-    numArray[i] = 0;
-  }
+  parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
 }
