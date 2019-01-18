@@ -38,7 +38,7 @@ const String menuscreens[numScreens][2][3] = {
   { {"Ease In/Out", ""},     {"On", "Off"}                     }, //setup 10
   { {"Repeat Movement", ""}, {"Yes", "No"}                     }  //repeat 11
 };
-unsigned int parameters[numScreens] = {0, 0, 3, 1, 3, 10, 1, 0, 1, 0, 0, 0};
+unsigned int parameters[numScreens] = {0, 0, 3, 1, 3, 15, 1, 0, 1, 0, 0, 0};
 
 //-------Input-------//
 int keyvalue = 0;
@@ -91,6 +91,7 @@ void loop() {       //Main Function
   keyvalue = recieveIR();
   if (keyvalue != 0 && keyvalue != 1 && !cancel) {
     inputAction(keyvalue);
+    Serial.println(parameters[menustep]);
     printScreen();
   }
   inputAction(0);
@@ -121,10 +122,20 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
     if (activeDigit >= 4) {
       activeDigit = 0;
     }
-    parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
-    for (int i; i < 4; i++) {
-      lcd.print(numArray[i]);
+    if (keyvalue != 5) {
+      parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];  
     }
+    if (parameters[menustep] < 1000)
+      lcd.print(F("0"));
+    if (parameters[menustep] < 100)
+      lcd.print(F("0"));
+    if (parameters[menustep] < 10)
+      lcd.print(F("0"));
+    lcd.print(parameters[menustep]);
+    
+    /*for (int i; i < 4; i++) {
+      lcd.print(numArray[i]);
+    }*/
     lcd.print(F(" "));
     lcd.print(menuscreens[menustep][0][1]); //unit
   } else {
@@ -136,7 +147,7 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(parameters[6]);
       lcd.print(F("cm"));
     }
-    else if (menuscreens[menustep][1][parameters[menustep]] == "" || menuscreens[menustep][1][parameters[menustep]] == NULL) { //screen with 4digit parameter + unit
+    /*else if (menuscreens[menustep][1][parameters[menustep]] == "" || menuscreens[menustep][1][parameters[menustep]] == NULL) { //screen with 4digit parameter + unit
       if (parameters[menustep] < 1000)
         lcd.print(F("0"));
       if (parameters[menustep] < 100)
@@ -146,9 +157,9 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(parameters[menustep]);
       lcd.print(F(" "));
       lcd.print(menuscreens[menustep][0][1]); //unit
-    }
+    }*/
     else { //screen with fixed values
-      Serial.println(menuscreens[menustep][1][parameters[menustep]]);
+      Serial.println(parameters[menustep]);
       lcd.print(menuscreens[menustep][1][parameters[menustep]]);
     }
   }
@@ -186,6 +197,23 @@ void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
   piep(1, 0);
   for (int i = 0; i < 4; ++i) {//reset numArray
     numArray[i] = 0;
+  }
+  switch (menustep) {
+    case 2:
+      numberInput();
+      break;
+    case 3:
+      numberInput();
+      break;
+    case 4:
+      numberInput();
+      break;
+    case 5:
+      numberInput();
+      break;
+    case 6:
+      numberInput();
+      break;
   }
 }
 

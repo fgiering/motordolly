@@ -44,16 +44,17 @@ void moveDolly(unsigned int movedirection, int movespeed, unsigned long movestep
 void moveTimelapse (unsigned int shotCount, unsigned long interval, unsigned long movesteps) { //Function to move the Motor more times and with an interval
   if (shotCount > 0 && interval > 0 && movesteps > 0 && !cancel) {
     int shotsDone = 0;
+    int directionTimelapse = 0;
     unsigned long preMillis = 0;
     preMillis = millis();
-    moveDolly(1, fullSpeed, movesteps);
+    moveDolly(directionTimelapse, fullSpeed, movesteps); //firsttime drive
     shotsDone++;
-    while (!cancel && shotsDone < shotCount)
-      if (millis() >= preMillis + interval) {
+    while (!cancel && shotsDone < shotCount) // drive while shots left
+      if (millis() >= preMillis + interval) { //drive after interval time
         preMillis = millis();
-        moveDolly(0, fullSpeed, movesteps);
+        moveDolly(directionTimelapse, fullSpeed, movesteps);
         shotsDone++;
-      } else {
+      } else { //show wait screen
         lcd.setCursor(0, 0);
         lcd.print(F("Timelapse - Wait"));
         lcd.setCursor(0, 1);
