@@ -14,19 +14,19 @@ void moveDolly(int movedirection, int movespeed, int movesteps) { //function to 
     }
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd.print("Driving...");
+    lcd.print(F("Driving..."));
     stepper.setMaxSpeed(movespeed);
     stepper.move(movesteps);
     if (parameters[9] == 1) {
       stepper.setSpeed(movespeed);
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.runSpeed();
-        recieveIR();
+        //recieveIR();
       }
     } else {
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.run();
-        recieveIR();
+        //recieveIR();
       }
     }
     ledOff();
@@ -47,14 +47,14 @@ void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to 
         shotsDone++;
       } else {
         lcd.setCursor(0, 0);
-        lcd.print("Timelapse - Wait");
+        lcd.print(F("Timelapse - Wait"));
         lcd.setCursor(0, 1);
         lcd.print(shotCount - shotsDone);
-        lcd.print(" shots in ");
+        lcd.print(F(" shots in "));
         lcd.print((interval - (millis() - preMillis)) / 1000);
-        lcd.print("s");
+        lcd.print(F("s"));
       }
-      recieveIR();
+      //recieveIR();
     } while (!cancel && shotsDone < shotCount);
     shotCount = 0;
     piep(5, 200); //timelapse ended alarm

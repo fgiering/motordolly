@@ -2,10 +2,10 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
   switch (menustep) {
     case 0: //root
       switch (selection) {
-        case 9: //dollyshot or timelapse
+        case 9: //dollyshot or timelapse or setup
           changeParameter(3);
           break;
-        case 7: //dollyshot or timelapse
+        case 7: //dollyshot or timelapse or setup
           changeParameter(3);
           break;
         case 5: //enter

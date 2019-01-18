@@ -1,8 +1,7 @@
 int recieveIR() {     //Function to recieve IR-Codes from the Remote
   if (irrec.decode(&recieved)) {
-    Serial.println(recieved.value, DEC);
+    //Serial.println(recieved.value, DEC);
     irrec.resume();
-    //getNewInput = false;
   }
   switch (recieved.value) {
     case 16753245: //key on Remote: power
