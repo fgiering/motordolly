@@ -110,8 +110,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           changeMenuStep(4);
           break;
         case 5:
-          //parameters[5] = parameters[5] * 1000; //calc interval from seconds to ms
-          //parameters[6] = parameters[6] * stepsPerCm; //movesteps needs to be calculatet from cm to steps
           moveTimelapse(parameters[4], parameters[5] * 1000L, parameters[6]* stepsPerCm);
           //calc interval from seconds to ms AND movesteps needs to be calculatet from cm to steps
           changeMenuStep(0);

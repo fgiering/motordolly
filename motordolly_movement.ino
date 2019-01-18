@@ -61,7 +61,7 @@ void moveTimelapse (unsigned int shotCount, unsigned long interval, unsigned lon
         lcd.print(shotCount - shotsDone);
         lcd.print(F(" shots in "));
         lcd.print((interval - (millis() - preMillis)) / 1000);
-        lcd.print(F("s"));
+        lcd.print(F("s  "));
         recieveIR();
       }
     piep(5, 200); //timelapse ended alarm
