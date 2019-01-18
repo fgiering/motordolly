@@ -78,12 +78,7 @@ void setup()
   //-----LCD Setup-----//
   lcd.init();
   lcd.backlight();
-
-  /*
-    for (int i = 0; i < numScreens; i++) { //Reset all parameters to 0
-    parameters[i] = 0;
-    }*/
-
+  
   printScreen(); //Show first menustep on Startup
 }
 
@@ -160,7 +155,7 @@ void reset() { //Function to Reset all e.g. after canceling
 void piep(int times, int waitTime) { //function to piep the speaker with Parameters 1-how often 2-how long to wait between in ms
   unsigned long preMillis = 0;
   int pieped = 0;
-  if (parameters[7] == 0) {
+  if (parameters[8] == 0) {
     while (pieped < times) {
       if (millis() - preMillis >= waitTime) {
         NewTone(TONE_PIN, 125);

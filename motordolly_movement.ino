@@ -17,7 +17,7 @@ void moveDolly(int movedirection, int movespeed, int movesteps) { //function to 
     lcd.print(F("Driving..."));
     stepper.setMaxSpeed(movespeed);
     stepper.move(movesteps);
-    if (parameters[9] == 1) {
+    if (parameters[10] == 1) {
       stepper.setSpeed(movespeed);
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.runSpeed();
@@ -36,11 +36,9 @@ void moveDolly(int movedirection, int movespeed, int movesteps) { //function to 
 
 void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to move the Motor more times and with an interval
   if (shotCount > 0 && interval > 0 && movesteps > 0 && !cancel) {
-    movesteps = movesteps * stepsPerCm; //movesteps needs to be calculatet from cm to steps
-    interval = interval * 1000; //calc interval from seconds to ms
     int shotsDone = 0;
     unsigned long preMillis = 0;
-    do {
+    while (!cancel && shotsDone < shotCount)
       if (millis() - preMillis >= interval) {
         preMillis = millis();
         moveDolly(1, fullSpeed, movesteps);
@@ -54,9 +52,6 @@ void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to 
         lcd.print((interval - (millis() - preMillis)) / 1000);
         lcd.print(F("s"));
       }
-      //recieveIR();
-    } while (!cancel && shotsDone < shotCount);
-    shotCount = 0;
-    piep(5, 200); //timelapse ended alarm
   }
-} 
+  piep(5, 200); //timelapse ended alarm
+}

@@ -1,5 +1,5 @@
 void ledOn (char color) { //function to turn on an LED Color with Parameter 1- which color (r,g,b)
-  if (parameters[8] == 0) {
+  if (parameters[9] == 0) {
     switch (color) {
       case 'r':
         analogWrite(LEDr, brightness);
