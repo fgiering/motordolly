@@ -61,9 +61,10 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           break;
         case 5: //enter starts drive
           if (parameters[2] > 0 && parameters[3] > 0) {
-            parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
-            parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
-            moveDolly(parameters[1], parameters[2], parameters[3]);
+            int tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
+            int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+            moveDolly(parameters[1], tempparam2, tempparam3);
+            //calc rpm(steps per second) from distance(steps)/duration(s) AND calc cm to steps
             changeMenuStep(11); //to repeatMovement
           } else {
             changeMenuStep(0);
@@ -111,7 +112,8 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
         case 5:
           //parameters[5] = parameters[5] * 1000; //calc interval from seconds to ms
           //parameters[6] = parameters[6] * stepsPerCm; //movesteps needs to be calculatet from cm to steps
-          moveTimelapse(parameters[4], parameters[5]*1000, parameters[6]* stepsPerCm);
+          moveTimelapse(parameters[4], parameters[5] * 1000L, parameters[6]* stepsPerCm);
+          //calc interval from seconds to ms AND movesteps needs to be calculatet from cm to steps
           changeMenuStep(0);
           break;
       }
@@ -164,19 +166,20 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           changeParameter(2);
           break;
         case 5: //enter
-          if (parameters[11] == 1) {
+          if (parameters[11] == 0) {
             for (int i = 0; i < 2; i++) { //drive twice, once back, once forward
               if (parameters[1] == 0) { //change direction
                 parameters[1] = 1;
               } else if (parameters[1] == 1) {
                 parameters[1] = 0;
               }
-              moveDolly(parameters[1], parameters[2], parameters[3]);
+              int tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
+              int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+              moveDolly(parameters[1], tempparam2, tempparam3);
             }
             changeMenuStep(11);
           } else {
             changeMenuStep(0);
-            //reset();
           }
           break;
       }

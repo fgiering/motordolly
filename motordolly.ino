@@ -38,7 +38,7 @@ const String menuscreens[numScreens][2][3] = {
   { {"Ease In/Out", ""},     {"On", "Off"}                     }, //setup 10
   { {"Repeat Movement", ""}, {"Yes", "No"}                     }  //repeat 11
 };
-long parameters[numScreens]={0};
+unsigned int parameters[numScreens] = {0, 0, 3, 1, 3, 10, 1, 0, 1, 0, 0, 0};
 
 //-------Input-------//
 int keyvalue = 0;
@@ -62,6 +62,10 @@ boolean getNewInput = true;
 //------Display------//
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+
+int temp;
+
+
 void setup()
 {
   Serial.begin(9600);
@@ -78,22 +82,26 @@ void setup()
   //-----LCD Setup-----//
   lcd.init();
   lcd.backlight();
-  
+
   printScreen(); //Show first menustep on Startup
 }
 
 void loop() {       //Main Function
   cancel = false;
   keyvalue = recieveIR();
-  if (keyvalue != 0 && keyvalue != 1) {
+  if (keyvalue != 0 && keyvalue != 1 && !cancel) {
     inputAction(keyvalue);
     printScreen();
   }
   inputAction(0);
+
+  /*Serial.print("I ran ");
+    Serial.println(temp);
+    temp++;*/
 }
 
 void printScreen() {  //Function to print text from the menuscreens Array on the Screen
-  String activeParam = menuscreens[menustep][1][parameters[menustep]];
+  //String activeParam = menuscreens[menustep][1][parameters[menustep]];
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(menuscreens[menustep][0][0]);
@@ -120,15 +128,15 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
     lcd.print(F(" "));
     lcd.print(menuscreens[menustep][0][1]); //unit
   } else {
-    if (menustep == 7) { //screen before start
+    if (menustep == 7) { //screen before start timelapse
       lcd.print(parameters[4]);
       lcd.print(F("p "));
       lcd.print(parameters[5]);
       lcd.print(F("s "));
       lcd.print(parameters[6]);
       lcd.print(F("cm"));
-    } 
-    else if (activeParam == "" || activeParam == NULL) { //screen with 4digit parameter + unit
+    }
+    else if (menuscreens[menustep][1][parameters[menustep]] == "" || menuscreens[menustep][1][parameters[menustep]] == NULL) { //screen with 4digit parameter + unit
       if (parameters[menustep] < 1000)
         lcd.print(F("0"));
       if (parameters[menustep] < 100)
@@ -140,15 +148,17 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(menuscreens[menustep][0][1]); //unit
     }
     else { //screen with fixed values
-      lcd.print(activeParam);
+      Serial.println(menuscreens[menustep][1][parameters[menustep]]);
+      lcd.print(menuscreens[menustep][1][parameters[menustep]]);
     }
   }
 }
 
 void reset() { //Function to Reset all e.g. after canceling
   stepper.stop();
-  delay(300);
+  delay(50);
   changeMenuStep(0);
+  ledOff();
   printScreen();
 }
 
@@ -157,7 +167,7 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
   int pieped = 0;
   if (parameters[8] == 0) {
     while (pieped < times) {
-      if (millis() - preMillis >= waitTime) {
+      if (millis() >= preMillis + waitTime) {
         NewTone(TONE_PIN, 125);
         delay(300);
         noNewTone(TONE_PIN);
@@ -169,12 +179,12 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
 }
 
 void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
+  menustep = newStep;
   getnumber = false;
   activeDigit = 0;
   lcd.noBlink();
   piep(1, 0);
-  menustep = newStep;
-  for (int i = 0; i < 4; ++i) {//or reset numArray
+  for (int i = 0; i < 4; ++i) {//reset numArray
     numArray[i] = 0;
   }
 }
