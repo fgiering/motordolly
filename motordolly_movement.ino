@@ -1,7 +1,4 @@
 void moveDolly(unsigned int movedirection, int movespeed, unsigned long movesteps) { //function to move the Motor with Parameters
-  /*Serial.println(movedirection);
-  Serial.println(movespeed);
-  Serial.println(movesteps);*/
   if (movespeed > 0 && movesteps > 0 && !cancel) {
     analogWrite(LEDr, 0);
     analogWrite(LEDg, 0);
