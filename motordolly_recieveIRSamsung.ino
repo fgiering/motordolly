@@ -1,7 +1,7 @@
-int recieveIR() {     //Function to recieve IR-Codes from the Remote
+int recieveIR(int waitTime) {     //Function to recieve IR-Codes from the Remote
   if (irrec.decode(&recieved)) {
-    Serial.println(recieved.value, DEC);
-    delay(100);
+    //Serial.println(recieved.value, DEC);
+    delay(waitTime);
     irrec.resume();
 
     switch (recieved.value) {

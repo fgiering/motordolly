@@ -61,10 +61,9 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           break;
         case 5: //enter starts drive
           if (parameters[2] > 0 && parameters[3] > 0) {
-            int tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
-            int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+            unsigned long tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
+            unsigned int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
             moveDolly(parameters[1], tempparam2, tempparam3);
-            //calc rpm(steps per second) from distance(steps)/duration(s) AND calc cm to steps
             changeMenuStep(11); //to repeatMovement
           } else {
             changeMenuStep(0);

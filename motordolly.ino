@@ -49,8 +49,8 @@ int activeDigit = 0;
 
 //------Motor------//
 AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
-const int stepsPerCm = 450;
-const int fullSpeed = 900.0;
+const long stepsPerCm = 450; //dislocation of motor to wheel
+const int fullSpeed = 1000.0; //maxSpeed = 2cm/s
 int movedirection = 0; //0=forwards, 1=backwards;
 
 //-----IR-Remote-----//
@@ -77,7 +77,7 @@ void setup()
   pinMode(LEDb, OUTPUT);
 
   //-----Motor Setup-----//
-  stepper.setAcceleration(80.0);
+  stepper.setAcceleration(100.0);
 
   //-----LCD Setup-----//
   lcd.init();
@@ -88,10 +88,10 @@ void setup()
 
 void loop() {       //Main Function
   cancel = false;
-  keyvalue = recieveIR();
+  keyvalue = recieveIR(200);
   if (keyvalue != 0 && keyvalue != 1 && !cancel) {
     inputAction(keyvalue);
-    Serial.println(parameters[menustep]);
+    //Serial.println(parameters[menustep]);
     printScreen();
   }
   inputAction(0);
@@ -159,7 +159,7 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(menuscreens[menustep][0][1]); //unit
     }*/
     else { //screen with fixed values
-      Serial.println(parameters[menustep]);
+      //Serial.println(parameters[menustep]);
       lcd.print(menuscreens[menustep][1][parameters[menustep]]);
     }
   }
