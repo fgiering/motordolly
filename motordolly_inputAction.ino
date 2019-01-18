@@ -46,7 +46,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5: //enter
-          getnumber=false;
           changeMenuStep(menustep + 1); // to dolly-distance
           ledOff();
           ledOn('b');
@@ -61,7 +60,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5: //enter starts drive
-          getnumber=false;
           if (parameters[2] > 0 && parameters[3] > 0) {
             parameters[3] = parameters[3] * stepsPerCm; //calc cm to steps
             parameters[2] = parameters[3] / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
@@ -81,7 +79,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5:
-          getnumber=false;
           changeMenuStep(menustep + 1);
           break;
       }
@@ -92,7 +89,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5:
-        getnumber=false;
           changeMenuStep(menustep + 1);
           break;
       }
@@ -103,7 +99,6 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           numberInput();
           break;
         case 5:
-        getnumber=false;
           changeMenuStep(menustep + 1);
           break;
       }
