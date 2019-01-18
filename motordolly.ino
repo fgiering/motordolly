@@ -50,7 +50,7 @@ int activeDigit = 0;
 //------Motor------//
 AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 const long stepsPerCm = 450; //dislocation of motor to wheel
-const int fullSpeed = 1000.0; //maxSpeed = 2cm/s
+const int fullSpeed = 1000; //maxSpeed = 2cm/s
 int movedirection = 0; //0=forwards, 1=backwards;
 
 //-----IR-Remote-----//

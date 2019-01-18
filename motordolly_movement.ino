@@ -8,7 +8,7 @@ void moveDolly(unsigned int movedirection, int movespeed, long movesteps) { //fu
       ledOn('g');
     }
     else if (movedirection == 1) { //backwards
-      movesteps = 0 - movesteps;
+      movesteps = 0L - movesteps;
       ledOff();
       ledOn('r');
     }
