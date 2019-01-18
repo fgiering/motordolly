@@ -1,4 +1,4 @@
-void moveDolly(unsigned int movedirection, int movespeed, unsigned long movesteps) { //function to move the Motor with Parameters
+void moveDolly(unsigned int movedirection, int movespeed, long movesteps) { //function to move the Motor with Parameters
   if (movespeed > 0 && movesteps > 0 && !cancel) {
     analogWrite(LEDr, 0);
     analogWrite(LEDg, 0);
@@ -25,12 +25,12 @@ void moveDolly(unsigned int movedirection, int movespeed, unsigned long movestep
       stepper.setSpeed(movespeed);
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.runSpeed();
-        recieveIR();
+        recieveIR(0);
       }
     } else {
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.run();
-        recieveIR();
+        recieveIR(0);
       }
     }
     ledOff();
@@ -59,7 +59,7 @@ void moveTimelapse (unsigned int shotCount, unsigned long interval, unsigned lon
         lcd.print(F(" shots in "));
         lcd.print((interval - (millis() - preMillis)) / 1000);
         lcd.print(F("s  "));
-        recieveIR();
+        recieveIR(0);
       }
     piep(5, 200); //timelapse ended alarm
   }

@@ -170,8 +170,8 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
               } else if (parameters[1] == 1) {
                 parameters[1] = 0;
               }
-              int tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
-              int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
+              unsigned long tempparam3 = parameters[3] * stepsPerCm ; //calc cm to steps
+              unsigned int tempparam2 = tempparam3 / parameters[2]; //calc rpm(steps per second) from distance(steps)/duration(s)
               moveDolly(parameters[1], tempparam2, tempparam3);
             }
             changeMenuStep(11);

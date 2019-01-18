@@ -38,7 +38,7 @@ const String menuscreens[numScreens][2][3] = {
   { {"Ease In/Out", ""},     {"On", "Off"}                     }, //setup 10
   { {"Repeat Movement", ""}, {"Yes", "No"}                     }  //repeat 11
 };
-unsigned int parameters[numScreens] = {0, 0, 3, 1, 3, 15, 1, 0, 1, 0, 0, 0};
+unsigned int parameters[numScreens] = {0, 0, 3, 5, 3, 15, 5, 0, 1, 0, 0, 0};
 
 //-------Input-------//
 int keyvalue = 0;
