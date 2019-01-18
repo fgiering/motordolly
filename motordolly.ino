@@ -126,6 +126,7 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
     lcd.print(F(" "));
     lcd.print(menuscreens[menustep][0][1]); //unit
     lcd.setCursor(activeDigit + 2, 1);
+    lcd.blink();
   } else {
     if (activeParam == "" || activeParam == NULL) { //screen with 4digit parameter + unit
       if (parameters[menustep] < 1000)
@@ -204,6 +205,6 @@ void changeParameter(int values) { //function to change a Parameter in the Param
 
 void numberInput () { //Function to input 4-digit numbers with remote an display it on Screen
   getnumber = true;
-  lcd.blink();
   lcd.setCursor(2, 1);
+  lcd.blink();
 }
