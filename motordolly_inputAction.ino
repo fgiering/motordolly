@@ -109,12 +109,9 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           changeMenuStep(4);
           break;
         case 5:
-          Serial.println(parameters[4]);
-          Serial.println(parameters[5]);
-          Serial.println(parameters[6]);
-          parameters[6] = parameters[6] * stepsPerCm; //movesteps needs to be calculatet from cm to steps
-          parameters[5] = parameters[5] * 1000; //calc interval from seconds to ms
-          moveTimelapse(parameters[4], parameters[5], parameters[6]);
+          //parameters[5] = parameters[5] * 1000; //calc interval from seconds to ms
+          //parameters[6] = parameters[6] * stepsPerCm; //movesteps needs to be calculatet from cm to steps
+          moveTimelapse(parameters[4], parameters[5]*1000, parameters[6]* stepsPerCm);
           changeMenuStep(0);
           break;
       }

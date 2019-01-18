@@ -38,7 +38,7 @@ const String menuscreens[numScreens][2][3] = {
   { {"Ease In/Out", ""},     {"On", "Off"}                     }, //setup 10
   { {"Repeat Movement", ""}, {"Yes", "No"}                     }  //repeat 11
 };
-int parameters[numScreens];
+long parameters[numScreens]={0};
 
 //-------Input-------//
 int keyvalue = 0;
@@ -111,9 +111,9 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       }
     }
     if (activeDigit >= 4) {
-      parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
       activeDigit = 0;
     }
+    parameters[menustep] = numArray[0] * 1000 + numArray[1] * 100 + numArray[2] * 10 + numArray[3];
     for (int i; i < 4; i++) {
       lcd.print(numArray[i]);
     }
@@ -137,7 +137,7 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
         lcd.print(F("0"));
       lcd.print(parameters[menustep]);
       lcd.print(F(" "));
-      lcd.print(menuscreens[menustep][0][1]);
+      lcd.print(menuscreens[menustep][0][1]); //unit
     }
     else { //screen with fixed values
       lcd.print(activeParam);
@@ -170,6 +170,7 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
 
 void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
   getnumber = false;
+  activeDigit = 0;
   lcd.noBlink();
   piep(1, 0);
   menustep = newStep;

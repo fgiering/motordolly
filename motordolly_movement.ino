@@ -21,12 +21,12 @@ void moveDolly(int movedirection, int movespeed, int movesteps) { //function to 
       stepper.setSpeed(movespeed);
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.runSpeed();
-        //recieveIR();
+        recieveIR();
       }
     } else {
       while (stepper.distanceToGo() != 0 && !cancel) {
         stepper.run();
-        //recieveIR();
+        recieveIR();
       }
     }
     ledOff();
@@ -34,7 +34,10 @@ void moveDolly(int movedirection, int movespeed, int movesteps) { //function to 
   }
 }
 
-void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to move the Motor more times and with an interval
+void moveTimelapse (int shotCount, long interval, long movesteps) { //Function to move the Motor more times and with an interval
+  Serial.println(shotCount);
+  Serial.println(interval);
+  Serial.println(movesteps);
   if (shotCount > 0 && interval > 0 && movesteps > 0 && !cancel) {
     int shotsDone = 0;
     unsigned long preMillis = 0;
@@ -52,6 +55,6 @@ void moveTimelapse (int shotCount, int interval, int movesteps) { //Function to 
         lcd.print((interval - (millis() - preMillis)) / 1000);
         lcd.print(F("s"));
       }
+    piep(5, 200); //timelapse ended alarm
   }
-  piep(5, 200); //timelapse ended alarm
 }
