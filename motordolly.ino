@@ -95,7 +95,6 @@ void loop() {       //Main Function
     printScreen();
   }
   inputAction(0);
-  keyvalue = 0;
 }
 
 void printScreen() {  //Function to print text from the menuscreens Array on the Screen
@@ -125,10 +124,16 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
     }
     lcd.print(F(" "));
     lcd.print(menuscreens[menustep][0][1]); //unit
-    lcd.setCursor(activeDigit + 2, 1);
-    lcd.blink();
   } else {
-    if (activeParam == "" || activeParam == NULL) { //screen with 4digit parameter + unit
+    if (menustep == 7) { //screen before start
+      lcd.print(parameters[4]);
+      lcd.print(F("p "));
+      lcd.print(parameters[5]);
+      lcd.print(F("s "));
+      lcd.print(parameters[6]);
+      lcd.print(F("cm"));
+    } 
+    else if (activeParam == "" || activeParam == NULL) { //screen with 4digit parameter + unit
       if (parameters[menustep] < 1000)
         lcd.print(F("0"));
       if (parameters[menustep] < 100)
@@ -139,20 +144,11 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(F(" "));
       lcd.print(menuscreens[menustep][0][1]);
     }
-    else if (menustep == 7) { //screen before start
-      lcd.print(parameters[4]);
-      lcd.print(F("p "));
-      lcd.print(parameters[5]);
-      lcd.print(F("s "));
-      lcd.print(parameters[6]);
-      lcd.print(F("cm"));
-    }
     else { //screen with fixed values
       lcd.print(activeParam);
     }
   }
 }
-
 
 void reset() { //Function to Reset all e.g. after canceling
   stepper.stop();
@@ -178,13 +174,13 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
 }
 
 void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
+  getnumber = false;
+  lcd.noBlink();
+  piep(1, 0);
   menustep = newStep;
   for (int i = 0; i < 4; ++i) {//or reset numArray
     numArray[i] = 0;
   }
-  getnumber = false;
-  lcd.noBlink();
-  piep(1, 0);
 }
 
 void changeParameter(int values) { //function to change a Parameter in the Parameter Array with Paramter 1-how many values do i have
@@ -205,6 +201,6 @@ void changeParameter(int values) { //function to change a Parameter in the Param
 
 void numberInput () { //Function to input 4-digit numbers with remote an display it on Screen
   getnumber = true;
-  lcd.setCursor(2, 1);
+  lcd.setCursor(activeDigit + 2, 1);
   lcd.blink();
 }
