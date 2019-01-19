@@ -4,11 +4,12 @@ void moveDolly(unsigned int movedirection, int movespeed, long movesteps) { //fu
     analogWrite(LEDg, 0);
     analogWrite(LEDb, 0);
     if (movedirection == 0) { //forwards
+      movesteps = abs(movesteps);
       ledOff();
       ledOn('g');
     }
     else if (movedirection == 1) { //backwards
-      movesteps = 0L - movesteps;
+      movesteps = -abs(movesteps);
       ledOff();
       ledOn('r');
     }
