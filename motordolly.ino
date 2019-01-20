@@ -91,14 +91,9 @@ void loop() {       //Main Function
   keyvalue = recieveIR(200);
   if (keyvalue != 0 && keyvalue != 1 && !cancel) {
     inputAction(keyvalue);
-    //Serial.println(parameters[menustep]);
     printScreen();
   }
   inputAction(0);
-
-  /*Serial.print("I ran ");
-    Serial.println(temp);
-    temp++;*/
 }
 
 void printScreen() {  //Function to print text from the menuscreens Array on the Screen
@@ -133,9 +128,6 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(F("0"));
     lcd.print(parameters[menustep]);
     
-    /*for (int i; i < 4; i++) {
-      lcd.print(numArray[i]);
-    }*/
     lcd.print(F(" "));
     lcd.print(menuscreens[menustep][0][1]); //unit
   } else {
@@ -147,19 +139,7 @@ void printScreen() {  //Function to print text from the menuscreens Array on the
       lcd.print(parameters[6]);
       lcd.print(F("cm"));
     }
-    /*else if (menuscreens[menustep][1][parameters[menustep]] == "" || menuscreens[menustep][1][parameters[menustep]] == NULL) { //screen with 4digit parameter + unit
-      if (parameters[menustep] < 1000)
-        lcd.print(F("0"));
-      if (parameters[menustep] < 100)
-        lcd.print(F("0"));
-      if (parameters[menustep] < 10)
-        lcd.print(F("0"));
-      lcd.print(parameters[menustep]);
-      lcd.print(F(" "));
-      lcd.print(menuscreens[menustep][0][1]); //unit
-    }*/
     else { //screen with fixed values
-      //Serial.println(parameters[menustep]);
       lcd.print(menuscreens[menustep][1][parameters[menustep]]);
     }
   }
