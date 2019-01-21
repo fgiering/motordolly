@@ -15,15 +15,15 @@
 #define motorPin4  5
 
 //-----LED Pins-----//
-const int LEDr = 9;
-const int LEDg = 10;
-const int LEDb = 6;
-int brightness = 100;
+const byte LEDr = 9;
+const byte LEDg = 10;
+const byte LEDb = 6;
+byte brightness = 100;
 
 //-------Menu-------//
-int nextmenustep = 0;
-int menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}, 5= setup etc.
-const int numScreens = 12;
+byte nextmenustep = 0;
+byte menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}, 5= setup etc.
+const byte numScreens = 12;
 const String menuscreens[numScreens][2][3] = {
   { {"Mode", ""},            {"Dolly", "Timelapse", "Setup"}   }, //root 0
   { {"Direction", ""},       {"forwards", "backwards"}         }, //dolly 1
@@ -41,29 +41,26 @@ const String menuscreens[numScreens][2][3] = {
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 3, 15, 5, 0, 1, 0, 0, 0};
 
 //-------Input-------//
-int keyvalue = 0;
+byte keyvalue = 0;
 boolean getnumber = false;
-int numArray [4] = {0, 0, 0, 1}; //for 4-digit NumberInputs
+byte numArray [4] = {0, 0, 0, 1}; //for 4-digit NumberInputs
 boolean cancel = false;
-int activeDigit = 0;
+byte activeDigit = 0;
 
 //------Motor------//
 AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
 const long stepsPerCm = 450; //dislocation of motor to wheel
 const int fullSpeed = 1000; //maxSpeed = 2cm/s
-int movedirection = 0; //0=forwards, 1=backwards;
+byte movedirection = 0; //0=forwards, 1=backwards;
 
 //-----IR-Remote-----//
-int IRmodul = 8;
+byte IRmodul = 8;
 IRrecv irrec(IRmodul);
 decode_results recieved;
 boolean getNewInput = true;
 
 //------Display------//
 LiquidCrystal_I2C lcd(0x27, 16, 2);
-
-
-int temp;
 
 
 void setup()
@@ -169,13 +166,13 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
   }
 }
 
-void changeMenuStep(int newStep) { //function to change the MenuStep in the menu
+void changeMenuStep(byte newStep) { //function to change the MenuStep in the menu
   menustep = newStep;
   getnumber = false;
   activeDigit = 0;
   lcd.noBlink();
   piep(1, 0);
-  for (int i = 0; i < 4; ++i) {//reset numArray
+  for (byte i = 0; i < 4; ++i) {//reset numArray
     numArray[i] = 0;
   }
   switch (menustep) {

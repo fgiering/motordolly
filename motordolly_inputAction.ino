@@ -164,7 +164,7 @@ void inputAction (int selection) {  //Function to manage the MenuSctructure
           break;
         case 5: //enter
           if (parameters[11] == 0) {
-            for (int i = 0; i < 2; i++) { //drive twice, once back, once forward
+            for (byte i = 0; i < 2; i++) { //drive twice, once back, once forward
               if (parameters[1] == 0) { //change direction
                 parameters[1] = 1;
               } else if (parameters[1] == 1) {
