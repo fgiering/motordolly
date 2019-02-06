@@ -15,9 +15,9 @@
 #define motorPin4  5
 
 //-----LED Pins-----//
-const byte LEDr = 9;
-const byte LEDg = 10;
-const byte LEDb = 6;
+const byte LEDr = 8;
+const byte LEDg = 9;
+const byte LEDb = 10;
 byte brightness = 100;
 
 //-------Menu-------//
@@ -38,7 +38,7 @@ const String menuscreens[numScreens][2][3] = {
   { {"Ease In/Out", ""},     {"On", "Off"}                     }, //setup 10
   { {"Repeat Movement", ""}, {"Yes", "No"}                     }  //repeat 11
 };
-unsigned int parameters[numScreens] = {0, 0, 3, 5, 3, 15, 5, 0, 1, 0, 0, 0};
+unsigned int parameters[numScreens] = {0, 0, 3, 5, 3, 15, 5, 0, 0, 0, 0, 0};
 
 //-------Input-------//
 byte keyvalue = 0;
@@ -54,7 +54,7 @@ const int fullSpeed = 1000; //maxSpeed = 2cm/s
 byte movedirection = 0; //0=forwards, 1=backwards;
 
 //-----IR-Remote-----//
-byte IRmodul = 8;
+byte IRmodul = 6;
 IRrecv irrec(IRmodul);
 decode_results recieved;
 boolean getNewInput = true;
@@ -156,7 +156,7 @@ void piep(int times, int waitTime) { //function to piep the speaker with Paramet
   if (parameters[8] == 0) {
     while (pieped < times) {
       if (millis() >= preMillis + waitTime) {
-        NewTone(TONE_PIN, 125);
+        NewTone(TONE_PIN, 2025); //pin, freq
         delay(300);
         noNewTone(TONE_PIN);
         pieped++;
