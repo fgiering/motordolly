@@ -29,6 +29,7 @@ const String menuscreens[numScreens][2][3] = {
     {{"Direction", ""}, {"forwards", "backwards"}},  //dolly 1
     {{"Duration", "s"}, {"", ""}},                   //dolly 2
     {{"Distance", "cm"}, {"", ""}},                  //dolly 3
+    {{"Want to start?", ""}, {"", ""}},              //dolly 31
     {{"Shots", "shots"}, {"", ""}},                  //timelapse 4
     {{"Interval", "s"}, {"", ""}},                   //timelapse 5
     {{"Distance", "cm"}, {"", ""}},                  //timelapse 6
@@ -194,6 +195,7 @@ void changeMenuStep(byte newStep)
   piep(1, 0);
   for (byte i = 0; i < 4; ++i)
   { //reset numArray
+    // TODO: Reset to late?
     numArray[i] = 0;
   }
   switch (menustep)
