@@ -71,15 +71,18 @@ void inputAction(int selection)
       numberInput();
       break;
     case 5: //enter
-      changeMenuStep(menustep + 1);
+            // TODO: back to menustep +1
+      // changeMenuStep(menustep + 1);
+      changeMenuStep(31);
+
       break;
     }
     break;
-  case 34: //dolly - start and drive
+  case 31: //dolly - start and drive
     switch (selection)
     {
     case 4:
-      changeMenuStep(4);
+      changeMenuStep(1);
       break;
     case 5: //enter
             //starts drive
