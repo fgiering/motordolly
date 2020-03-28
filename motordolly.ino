@@ -25,19 +25,19 @@ byte nextmenustep = 0;
 byte menustep = 0; // 10= dolly{10=direction, 11=duration, 12=range}, 30=timelapse{31=shots, 32=interval, 33=distance}, 50= setup, 70=repeat
 const byte numScreens = 13;
 const String menuscreens[numScreens][2][3] = {
-    {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}}, //root 0       //menustep 0
-    {{"Direction", ""}, {"forwards", "backwards"}},  //dolly 1      //menustep 10
-    {{"Duration", "s"}, {"", ""}},                   //dolly 2      //menustep 11
-    {{"Distance", "cm"}, {"", ""}},                  //dolly 3      //menustep 12
-    {{"Want to start?", ""}, {"", ""}},              //dolly 4      //menustep 13
-    {{"Shots", "shots"}, {"", ""}},                  //timelapse 5  //menustep 30
-    {{"Interval", "s"}, {"", ""}},                   //timelapse 6  //menustep 31
-    {{"Distance", "cm"}, {"", ""}},                  //timelapse 7  //menustep 32
-    {{"Want to start?", ""}, {"", ""}},              //timelapse 8  //menustep 33
-    {{"Sound", ""}, {"On", "Off"}},                  //setup 9      //menustep 50
-    {{"LED", ""}, {"On", "Off"}},                    //setup 10     //menustep 51
-    {{"Ease In/Out", ""}, {"On", "Off"}},            //setup 11     //menustep 52
-    {{"Repeat Movement", ""}, {"Yes", "No"}}         //repeat 12    //menustep 70
+    {{"Mode", ""},            {"Dolly", "Timelapse", "Setup"}}, //root 0       //menustep 0
+    {{"Direction", ""},       {"forwards", "backwards"}},       //dolly 1      //menustep 10
+    {{"Duration", "s"},       {"", ""}},                        //dolly 2      //menustep 11
+    {{"Distance", "cm"},      {"", ""}},                        //dolly 3      //menustep 12
+    {{"Want to start?", ""},  {"", ""}},                        //dolly 4      //menustep 13
+    {{"Shots", "shots"},      {"", ""}},                        //timelapse 5  //menustep 30
+    {{"Interval", "s"},       {"", ""}},                        //timelapse 6  //menustep 31
+    {{"Distance", "cm"},      {"", ""}},                        //timelapse 7  //menustep 32
+    {{"Want to start?", ""},  {"", ""}},                        //timelapse 8  //menustep 33
+    {{"Sound", ""},           {"On", "Off"}},                   //setup 9      //menustep 50
+    {{"LED", ""},             {"On", "Off"}},                   //setup 10     //menustep 51
+    {{"Ease In/Out", ""},     {"On", "Off"}},                   //setup 11     //menustep 52
+    {{"Repeat Movement", ""}, {"Yes", "No"}}                    //repeat 12    //menustep 70
 };
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
 
@@ -86,13 +86,13 @@ void setup()
 void loop()
 { //Main Function
   cancel = false;
-  keyvalue = recieveIR(200);
-  if (keyvalue != 0 && keyvalue != 1 && !cancel)
+  keyvalue = recieveIR(200); //recieve Input from IR
+  if (keyvalue != 0 && keyvalue != 1 && !cancel) // do not if canceled
   {
-    inputAction(keyvalue);
-    printScreen();
+    inputAction(keyvalue);  //do something
+    printScreen();          //print something
   }
-  inputAction(0);
+  inputAction(0); //back to startscreen
 }
 
 void printScreen()
@@ -103,8 +103,8 @@ void printScreen()
   lcd.print(menuscreens[lookUp(menustep)][0][0]);
   lcd.setCursor(0, 1);
   lcd.print(F("> "));
-  if (getnumber)
-  { // if number input active
+  if (getnumber) // if number input active show number input
+  { 
     if (activeDigit < 4)
     {
       if (keyvalue < 22 && keyvalue > 12 || keyvalue == 10)
@@ -143,8 +143,8 @@ void printScreen()
   {
      if (menustep == 13)
     { //screen before start dolly
-      lcd.print(parameters[1]);
-      lcd.print(F("p "));
+      //lcd.print(parameters[1]);
+      lcd.print(F(" "));
       lcd.print(parameters[2]);
       lcd.print(F("s "));
       lcd.print(parameters[3]);
@@ -169,6 +169,7 @@ void printScreen()
 
 void reset()
 { //Function to Reset all e.g. after canceling
+  cancel = true;
   stepper.stop();
   delay(50);
   changeMenuStep(0);
@@ -176,8 +177,8 @@ void reset()
   printScreen();
 }
 
-void piep(int times, int waitTime)
-{ //function to piep the speaker with Parameters 1-how often 2-how long to wait between in ms
+void piep(int times, int waitTime) //function to piep the speaker with Parameters 1-how often 2-how long to wait between in ms
+{ 
   unsigned long preMillis = 0;
   int pieped = 0;
   if (parameters[9] == 0)
@@ -196,24 +197,24 @@ void piep(int times, int waitTime)
   }
 }
 
-void changeMenuStep(byte newStep)
-{ //function to change the MenuStep in the menu
+void changeMenuStep(byte newStep) //function to change the MenuStep in the menu
+{ 
   menustep = newStep;
   getnumber = false;
   activeDigit = 0;
   lcd.noBlink();
   piep(1, 0);
-  for (byte i = 0; i < 4; ++i)
-  { //reset numArray
+  for (byte i = 0; i < 4; ++i) //reset numArray
+  { 
     // TODO: Is this Reset to late?
     numArray[i] = 0;
   }
   switch (menustep)
   {
-  case 12:
+  case 11:
     numberInput();
     break;
-  case 13:
+  case 12:
     numberInput();
     break;
   case 30:
@@ -228,8 +229,8 @@ void changeMenuStep(byte newStep)
   }
 }
 
-void changeParameter(int values)
-{ //function to change a Parameter in the Parameter Array with Paramter 1-how many values do i have
+void changeParameter(int values) //function to change a Parameter in the Parameter Array with Paramter 1-how many values do i have
+{ 
   if (keyvalue == 9 && parameters[lookUp(menustep)] < values)
   {
     if (parameters[lookUp(menustep)] == values - 1)
@@ -262,21 +263,21 @@ void numberInput()
 }
 
 
-void lookUp(byte menustepInMenu)
+byte lookUp(byte menustepInMenu)
 {
-  if (menustepInMenu == 0 ) {  return 0 }   //root 0       //menustep 0
-  if (menustepInMenu == 10) {  return 1 }   //dolly 1      //menustep 10
-  if (menustepInMenu == 11) {  return 2 }   //dolly 2      //menustep 11
-  if (menustepInMenu == 12) {  return 3 }   //dolly 3      //menustep 12
-  if (menustepInMenu == 13) {  return 4 }   //dolly 4      //menustep 13
-  if (menustepInMenu == 30) {  return 5 }   //timelapse 5  //menustep 30
-  if (menustepInMenu == 31) {  return 6 }   //timelapse 6  //menustep 31
-  if (menustepInMenu == 32) {  return 7 }   //timelapse 7  //menustep 32
-  if (menustepInMenu == 33) {  return 8 }   //timelapse 8  //menustep 33
-  if (menustepInMenu == 50) {  return 9 }   //setup 9      //menustep 50
-  if (menustepInMenu == 51) {  return 10}   //setup 10     //menustep 51
-  if (menustepInMenu == 52) {  return 11}   //setup 11     //menustep 52
-  if (menustepInMenu == 70) {  return 12}   //repeat 12    //menustep 70
+  if (menustepInMenu == 0 ) {  return 0 ;}   //root 0       //menustep 0
+  if (menustepInMenu == 10) {  return 1 ;}   //dolly 1      //menustep 10
+  if (menustepInMenu == 11) {  return 2 ;}   //dolly 2      //menustep 11
+  if (menustepInMenu == 12) {  return 3 ;}   //dolly 3      //menustep 12
+  if (menustepInMenu == 13) {  return 4 ;}   //dolly 4      //menustep 13
+  if (menustepInMenu == 30) {  return 5 ;}   //timelapse 5  //menustep 30
+  if (menustepInMenu == 31) {  return 6 ;}   //timelapse 6  //menustep 31
+  if (menustepInMenu == 32) {  return 7 ;}   //timelapse 7  //menustep 32
+  if (menustepInMenu == 33) {  return 8 ;}   //timelapse 8  //menustep 33
+  if (menustepInMenu == 50) {  return 9 ;}   //setup 9      //menustep 50
+  if (menustepInMenu == 51) {  return 10;}   //setup 10     //menustep 51
+  if (menustepInMenu == 52) {  return 11;}   //setup 11     //menustep 52
+  if (menustepInMenu == 70) {  return 12;}   //repeat 12    //menustep 70
   else
     return 0;
 }

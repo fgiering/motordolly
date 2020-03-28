@@ -14,7 +14,7 @@ void inputAction(int selection)
     case 5: //enter
       if (parameters[lookUp(menustep)] == 0)
       {
-        nextmenustep = 1; //to dolly-direction
+        nextmenustep = 10; //to dolly-direction
         ledOff();
         ledOn('b');
       }
@@ -72,7 +72,6 @@ void inputAction(int selection)
       break;
     case 5: //enter
       changeMenuStep(menustep + 1);
-
       break;
     }
     break;
@@ -89,15 +88,17 @@ void inputAction(int selection)
         unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
         unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
         moveDolly(parameters[1], tempparam2, tempparam3);
+        if (stepper.distanceToGo() == 0) {
         changeMenuStep(70); //to repeatMovement
+        }
       }
       else
       {
         changeMenuStep(0);
       }
-
       break;
     }
+    break;
 
   //Timelapsemenu
   case 30: //timelapse - shots

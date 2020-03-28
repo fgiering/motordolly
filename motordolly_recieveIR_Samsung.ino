@@ -8,7 +8,6 @@ int recieveIR(int waitTime)
     switch (recieved.value)
     {
     case 3772793023: //key on Remote: power
-      cancel = true;
       reset();
       return (1);
       break;
