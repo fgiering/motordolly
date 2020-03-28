@@ -70,7 +70,22 @@ void inputAction(int selection)
     default:
       numberInput();
       break;
-    case 5: //enter starts drive
+    case 5: //enter
+            // TODO: back to menustep +1
+      // changeMenuStep(menustep + 1);
+      changeMenuStep(31);
+
+      break;
+    }
+    break;
+  case 31: //dolly - start and drive
+    switch (selection)
+    {
+    case 4:
+      changeMenuStep(1);
+      break;
+    case 5: //enter
+            //starts drive
       if (parameters[2] > 0 && parameters[3] > 0)
       {
         unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
@@ -82,9 +97,9 @@ void inputAction(int selection)
       {
         changeMenuStep(0);
       }
+
       break;
     }
-    break;
 
   //Timelapsemenu
   case 4: //timelapse - shots

@@ -22,13 +22,14 @@ byte brightness = 100;
 
 //-------Menu-------//
 byte nextmenustep = 0;
-byte menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}, 5= setup etc.
-const byte numScreens = 12;
+byte menustep = 0; // 1= dolly{1=direction, 2=duration, 3=range}, 4=timelapse{4=shots, 5=interval, 6=distance}, 8= setup etc.
+const byte numScreens = 13;
 const String menuscreens[numScreens][2][3] = {
     {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}}, //root 0
     {{"Direction", ""}, {"forwards", "backwards"}},  //dolly 1
     {{"Duration", "s"}, {"", ""}},                   //dolly 2
     {{"Distance", "cm"}, {"", ""}},                  //dolly 3
+    {{"Want to start?", ""}, {"", ""}},              //dolly 31
     {{"Shots", "shots"}, {"", ""}},                  //timelapse 4
     {{"Interval", "s"}, {"", ""}},                   //timelapse 5
     {{"Distance", "cm"}, {"", ""}},                  //timelapse 6
@@ -38,7 +39,7 @@ const String menuscreens[numScreens][2][3] = {
     {{"Ease In/Out", ""}, {"On", "Off"}},            //setup 10
     {{"Repeat Movement", ""}, {"Yes", "No"}}         //repeat 11
 };
-unsigned int parameters[numScreens] = {0, 0, 3, 5, 3, 15, 5, 0, 0, 0, 0, 0};
+unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
 
 //-------Input-------//
 byte keyvalue = 0;
@@ -194,6 +195,7 @@ void changeMenuStep(byte newStep)
   piep(1, 0);
   for (byte i = 0; i < 4; ++i)
   { //reset numArray
+    // TODO: Reset to late?
     numArray[i] = 0;
   }
   switch (menustep)
