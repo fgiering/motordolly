@@ -129,7 +129,6 @@ void loop()
 
 void printScreen()
 { //Function to print text from the menuscreens Array on the Screen
-  //TODO: can i remove? String activeParam = menuscreens[lookUp(menustep)][1][parameters[lookUp(menustep)]];
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(menuscreens[lookUp(menustep)][0][0]);
@@ -177,9 +176,13 @@ void printScreen()
   {
     if (menustep == 13)
     { //screen before start dolly
-      //TODO: parameter back or forward
-      //lcd.print(parameters[1]);
-      lcd.print(F(" "));
+      if (parameters[1] == 0) {
+        lcd.print(F("f"));
+      }
+      if (parameters[1] == 1) {
+        lcd.print(F("b"));
+      }
+      lcd.print(F("  "));
       lcd.print(parameters[2]);
       lcd.print(F("s "));
       lcd.print(parameters[3]);
