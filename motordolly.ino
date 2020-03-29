@@ -14,11 +14,11 @@
     * Sound Alarm, wenn Timelapse fertig
 
     Roadmap:
-    * Presets for Dollyshots
-    * Dollyfahrt in Timelapse umrechnen
-    * Manueller TImelapse (Klick and Shot)
-    * Time-controlled Timelapse or Dollyshot
-    * Smooth Timelapse
+    * TODO: Presets for Dollyshots
+    * TODO: Dollyfahrt in Timelapse umrechnen
+    * TODO: Manueller TImelapse (Klick and Shot)
+    * TODO: Time-controlled Timelapse or Dollyshot
+    * TODO: Smooth Timelapse
 
     Erstellt mit:
     * Arduino Uno
