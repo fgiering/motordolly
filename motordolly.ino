@@ -68,7 +68,7 @@ const String menuscreens[numScreens][2][3] = {
     {{"Sound", ""}, {"On", "Off"}},                               //setup 9      //menustep 50
     {{"LED", ""}, {"On", "Off"}},                                 //setup 10     //menustep 51
     {{"Ease In/Out", ""}, {"On", "Off"}},                         //setup 11     //menustep 52
-    {{"Repeat Movement", ""}, {"No", "BacknAgain", "Gostraight"}} //repeat 12    //menustep 70
+    {{"Repeat?", ""}, {"No", "BacknAgain", "Gostraight"}} //repeat 12    //menustep 70
 };
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
 
@@ -86,7 +86,7 @@ const int fullSpeed = 1000;  //maxSpeed = 2cm/s
 byte movedirection = 0;      //0=forwards, 1=backwards;
 
 //-----IR-Remote-----//
-byte IRmodul = 6;
+const byte IRmodul = 6; //pin of IR module
 IRrecv irrec(IRmodul);
 decode_results recieved;
 boolean getNewInput = true;
@@ -293,6 +293,7 @@ void numberInput()
 { //Function to input 4-digit numbers with remote and display it on screen
   getnumber = true;
 
+  //Write Parameters of Menustep to numArray to show last Values
   numArray[3] = (parameters[lookUp(menustep)]   % 10);
   numArray[2] = ((parameters[lookUp(menustep)]  / 10)   % 10);
   numArray[1] = ((parameters[lookUp(menustep)]  / 100)  % 10);
