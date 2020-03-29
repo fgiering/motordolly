@@ -88,9 +88,7 @@ void inputAction(int selection)
         unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
         unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
         moveDolly(parameters[1], tempparam2, tempparam3);
-        if (stepper.distanceToGo() == 0) {
         changeMenuStep(70); //to repeatMovement
-        }
       }
       else
       {
@@ -193,13 +191,17 @@ void inputAction(int selection)
     switch (selection)
     {
     case 7:
-      changeParameter(2);
+      changeParameter(3);
       break;
     case 9:
-      changeParameter(2);
+      changeParameter(3);
       break;
     case 5: //enter
-      if (parameters[12] == 0)
+      if (parameters[lookUp(menustep)] == 0) // no repeat
+      {
+        changeMenuStep(0);
+      }
+      if (parameters[lookUp(menustep)] == 1) // Back & Again
       {
         for (byte i = 0; i < 2; i++)
         { //drive twice, once back, once forward
@@ -215,11 +217,13 @@ void inputAction(int selection)
           unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
           moveDolly(parameters[1], tempparam2, tempparam3);
         }
-        changeMenuStep(70);
+        changeMenuStep(menustep);
       }
-      else
-      {
-        changeMenuStep(0);
+      if (parameters[lookUp(menustep)] == 2) { // Go straight on
+          unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
+          unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
+          moveDolly(parameters[1], tempparam2, tempparam3);
+        changeMenuStep(menustep);
       }
       break;
     }
