@@ -55,7 +55,7 @@ void moveTimelapse(unsigned int shotCount, unsigned long interval, unsigned long
   if (shotCount > 0 && interval > 0 && movesteps > 0 && !cancel)
   {
     int shotsDone = 0;
-    int directionTimelapse = 0;
+    int directionTimelapse = 0; // forwards or backwards
     unsigned long preMillis = 0;
     preMillis = millis();
     moveDolly(directionTimelapse, fullSpeed, movesteps); //firsttime drive

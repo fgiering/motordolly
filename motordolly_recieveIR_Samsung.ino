@@ -15,6 +15,7 @@ int recieveIR(int waitTime)
       return (2);
       break;
     case 3772837903: //key on Remote: mute
+      parameters[9] = 1; // muting sound
       return (3);
       break;
     case 3772819033: //key on Remote: left
@@ -39,6 +40,7 @@ int recieveIR(int waitTime)
       return (10);
       break;
     case 3772789963: //key on Remote: TTX
+      switchBacklight(); // switch Backlight from LCD
       return (11);
       break;
     case 3772827703: //key on Remote: PRE-CH

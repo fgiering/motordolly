@@ -1,3 +1,33 @@
+/*****************************Intro************************************
+/// motodolly
+   
+    Ein motorisierter Skater-Dolly um Kamera Bewgungen wie mit einem
+    Kameraroboter ausführen zu können.
+
+    Features:
+    * Dolly Fahrten
+    * Dolly Fahrten 1:1 wiederholen
+    * Timelapse Fahrten
+    * Display deaktivieren für Aufnahmen im Dunkeln
+    * Sound deaktivieren
+    * Ease In/Out der Bewegung deaktivierbar
+    * Sound Alarm, wenn Timelapse fertig
+
+    Roadmap:
+    * Presets for Dollyshots
+    * Dollyfahrt in Timelapse umrechnen
+    * Manueller TImelapse (Klick and Shot)
+    * Time-controlled Timelapse or Dollyshot
+    * Smooth Timelapse
+
+    Erstellt mit:
+    * Arduino Uno
+    * LCD von ELEGOO
+    * STEP MOTOR 288YJ-48 5V DC 
+
+
+**********************************************************************/
+
 //-----Libraries-----//
 #include <NewTone.h>
 #include <IRremote.h>
@@ -7,6 +37,7 @@
 
 //-----Sound pin-----//
 #define TONE_PIN 7
+
 //-----Motor pins-----//
 #define HALFSTEP 8
 #define motorPin1 2
@@ -62,6 +93,7 @@ boolean getNewInput = true;
 
 //------Display------//
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+boolean backlightState = true;
 
 void setup()
 {
@@ -339,4 +371,17 @@ byte lookUp(byte menustepInMenu)
 
   else
     return 0;
+}
+
+
+void switchBacklight () {
+  if (backlightState == true) {
+    lcd.noBacklight();
+    backlightState = false;
+  }
+  else {
+    lcd.backlight();
+    backlightState = true;
+  }
+
 }

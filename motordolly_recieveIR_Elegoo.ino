@@ -6,7 +6,6 @@
 
     switch (recieved.value) {
       case 16753245: //key on Remote: power
-        cancel = true;
         reset();
         return (1);
         break;
