@@ -177,9 +177,11 @@ void printScreen()
     if (menustep == 13)
     { //screen before start dolly
       if (parameters[1] == 0) {
+        //TODO: make a beautiful char for forwards
         lcd.print(F("f"));
       }
       if (parameters[1] == 1) {
+        //TODO: make a beautiful char for backwards
         lcd.print(F("b"));
       }
       lcd.print(F("  "));
