@@ -55,7 +55,7 @@ byte brightness = 100;
 byte nextmenustep = 0;
 byte menustep = 0; // 10= dolly{10=direction, 11=duration, 12=range}, 30=timelapse{31=shots, 32=interval, 33=distance}, 50= setup, 70=repeat
 const byte numScreens = 13;
-const String menuscreens[numScreens][2][3] = {
+const char * menuscreens[numScreens][2][3] = {
     {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}},              //root 0       //menustep 0
     {{"Direction", ""}, {"forwards", "backwards"}},               //dolly 1      //menustep 10
     {{"Duration", "s"}, {"", ""}},                                //dolly 2      //menustep 11
@@ -68,7 +68,7 @@ const String menuscreens[numScreens][2][3] = {
     {{"Sound", ""}, {"On", "Off"}},                               //setup 9      //menustep 50
     {{"LED", ""}, {"On", "Off"}},                                 //setup 10     //menustep 51
     {{"Ease In/Out", ""}, {"On", "Off"}},                         //setup 11     //menustep 52
-    {{"Repeat?", ""}, {"No", "BacknAgain", "Gostraight"}} //repeat 12    //menustep 70
+    {{"Repeat Movement", ""}, {"No", "Back & Again", "Go straight"}} //repeat 12    //menustep 70
 };
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
 
