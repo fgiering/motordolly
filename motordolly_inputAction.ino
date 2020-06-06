@@ -91,13 +91,25 @@ void inputAction(int selection)
         if (studioMode == true)
         {
           unsigned long preMillis = 0;
+          unsigned long interval = waitTimeStudio * 1000L;
           preMillis = millis();
           while (!cancel) // drive until escape
-            if (millis() >= preMillis + (waitTimeStudio * 1000L))
+          {
+            if (millis() >= preMillis + interval)
             { //drive after interval time
+              backAndAgain(interval);
               preMillis = millis();
-              backAndAgain();
             }
+            else
+            { //show wait screen
+              lcd.setCursor(0, 0);
+              lcd.print(F("Wait  Go Back"));
+              lcd.setCursor(0, 1);
+              lcd.print((interval - (millis() - preMillis)) / 1000);
+              lcd.print(F("s  "));
+              recieveIR(0);
+            }
+          }
         }
         changeMenuStep(70); //to repeatMovement
       }
@@ -214,7 +226,7 @@ void inputAction(int selection)
       }
       if (parameters[lookUp(menustep)] == 1) // Back & Again
       {
-        backAndAgain();
+        backAndAgain(0);
         changeMenuStep(menustep);
       }
       if (parameters[lookUp(menustep)] == 2)

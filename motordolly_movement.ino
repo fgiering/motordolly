@@ -61,6 +61,7 @@ void moveTimelapse(unsigned int shotCount, unsigned long interval, unsigned long
     moveDolly(directionTimelapse, fullSpeed, movesteps); //firsttime drive
     shotsDone++;
     while (!cancel && shotsDone < shotCount) // drive while shots left
+    {
       if (millis() >= preMillis + interval)
       { //drive after interval time
         preMillis = millis();
@@ -78,27 +79,54 @@ void moveTimelapse(unsigned int shotCount, unsigned long interval, unsigned long
         lcd.print(F("s  "));
         recieveIR(0);
       }
+    }
     piep(5, 200); //timelapse ended alarm
   }
 }
 
 // Repeat Movements
 
-void backAndAgain()
+void backAndAgain(unsigned long interval)
 {
-  for (byte i = 0; i < 2; i++)
-  { //drive twice, once back, once forward
-    if (parameters[1] == 0)
-    { //change direction
-      parameters[1] = 1;
+  boolean drive = true;
+  if (parameters[1] == 0)
+  { //change direction
+    parameters[1] = 1;
+  }
+  else if (parameters[1] == 1)
+  {
+    parameters[1] = 0;
+  }
+  unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
+  unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
+  unsigned long preMillis = 0;
+  moveDolly(parameters[1], tempparam2, tempparam3); // drive back
+  if (parameters[1] == 0)
+  { //change direction
+    parameters[1] = 1;
+  }
+  else if (parameters[1] == 1)
+  {
+    parameters[1] = 0;
+  }
+  preMillis = millis();
+  while (!cancel && drive) //drive twice, once back, once forward
+  {
+    if (millis() >= preMillis + interval)
+    { //drive after interval time
+      preMillis = millis();
+      moveDolly(parameters[1], tempparam2, tempparam3); // drive again
+      drive = false;
     }
-    else if (parameters[1] == 1)
-    {
-      parameters[1] = 0;
+    else
+    { //show wait screen
+      lcd.setCursor(0, 0);
+      lcd.print(F("Wait  Go Straight"));
+      lcd.setCursor(0, 1);
+      lcd.print((interval - (millis() - preMillis)) / 1000);
+      lcd.print(F("s  "));
+      recieveIR(0);
     }
-    unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
-    unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
-    moveDolly(parameters[1], tempparam2, tempparam3);
   }
 }
 
