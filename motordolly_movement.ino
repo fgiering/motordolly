@@ -81,3 +81,30 @@ void moveTimelapse(unsigned int shotCount, unsigned long interval, unsigned long
     piep(5, 200); //timelapse ended alarm
   }
 }
+
+// Repeat Movements
+
+void backAndAgain()
+{
+  for (byte i = 0; i < 2; i++)
+  { //drive twice, once back, once forward
+    if (parameters[1] == 0)
+    { //change direction
+      parameters[1] = 1;
+    }
+    else if (parameters[1] == 1)
+    {
+      parameters[1] = 0;
+    }
+    unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
+    unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
+    moveDolly(parameters[1], tempparam2, tempparam3);
+  }
+}
+
+void straightOn()
+{
+  unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
+  unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
+  moveDolly(parameters[1], tempparam2, tempparam3);
+}

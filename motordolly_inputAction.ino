@@ -88,6 +88,13 @@ void inputAction(int selection)
         unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
         unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
         moveDolly(parameters[1], tempparam2, tempparam3);
+        if (studioMode == true)
+        {
+          while (!cancel)
+          {
+            backAndAgain();
+          }
+        }
         changeMenuStep(70); //to repeatMovement
       }
       else
@@ -196,37 +203,23 @@ void inputAction(int selection)
     case 9:
       changeParameter(3);
       break;
-    case 5: //enter
+    case 5:                                  //enter
       if (parameters[lookUp(menustep)] == 0) // no repeat
       {
         changeMenuStep(0);
       }
       if (parameters[lookUp(menustep)] == 1) // Back & Again
       {
-        for (byte i = 0; i < 2; i++)
-        { //drive twice, once back, once forward
-          if (parameters[1] == 0)
-          { //change direction
-            parameters[1] = 1;
-          }
-          else if (parameters[1] == 1)
-          {
-            parameters[1] = 0;
-          }
-          unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
-          unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
-          moveDolly(parameters[1], tempparam2, tempparam3);
-        }
-        changeMenuStep(menustep);
+        backAndAgain();
       }
-      if (parameters[lookUp(menustep)] == 2) { // Go straight on
-          unsigned long tempparam3 = parameters[3] * stepsPerCm; //calc cm to steps
-          unsigned int tempparam2 = tempparam3 / parameters[2];  //calc rpm(steps per second) from distance(steps)/duration(s)
-          moveDolly(parameters[1], tempparam2, tempparam3);
-        changeMenuStep(menustep);
-      }
-      break;
+      changeMenuStep(menustep);
+    }
+    if (parameters[lookUp(menustep)] == 2)
+    { // Go straight on
+      straightOn();
     }
     break;
   }
+  break;
+}
 }

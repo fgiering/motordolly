@@ -55,22 +55,25 @@ byte brightness = 100;
 byte nextmenustep = 0;
 byte menustep = 0; // 10= dolly{10=direction, 11=duration, 12=range}, 30=timelapse{31=shots, 32=interval, 33=distance}, 50= setup, 70=repeat
 const byte numScreens = 13;
-const char * menuscreens[numScreens][2][3] = {
-    {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}},              //root 0       //menustep 0
-    {{"Direction", ""}, {"forwards", "backwards"}},               //dolly 1      //menustep 10
-    {{"Duration", "s"}, {"", ""}},                                //dolly 2      //menustep 11
-    {{"Distance", "cm"}, {"", ""}},                               //dolly 3      //menustep 12
-    {{"Want to start?", ""}, {"", ""}},                           //dolly 4      //menustep 13
-    {{"Shots", "shots"}, {"", ""}},                               //timelapse 5  //menustep 30
-    {{"Interval", "s"}, {"", ""}},                                //timelapse 6  //menustep 31
-    {{"Distance", "cm"}, {"", ""}},                               //timelapse 7  //menustep 32
-    {{"Want to start?", ""}, {"", ""}},                           //timelapse 8  //menustep 33
-    {{"Sound", ""}, {"On", "Off"}},                               //setup 9      //menustep 50
-    {{"LED", ""}, {"On", "Off"}},                                 //setup 10     //menustep 51
-    {{"Ease In/Out", ""}, {"On", "Off"}},                         //setup 11     //menustep 52
+
+const char *menuscreens[numScreens][2][3] = {
+    {{"Mode", ""}, {"Dolly", "Timelapse", "Setup"}},                 //root 0       //menustep 0
+    {{"Direction", ""}, {"forwards", "backwards"}},                  //dolly 1      //menustep 10
+    {{"Duration", "s"}, {"", ""}},                                   //dolly 2      //menustep 11
+    {{"Distance", "cm"}, {"", ""}},                                  //dolly 3      //menustep 12
+    {{"Want to start?", ""}, {"", ""}},                              //dolly 4      //menustep 13
+    {{"Shots", "shots"}, {"", ""}},                                  //timelapse 5  //menustep 30
+    {{"Interval", "s"}, {"", ""}},                                   //timelapse 6  //menustep 31
+    {{"Distance", "cm"}, {"", ""}},                                  //timelapse 7  //menustep 32
+    {{"Want to start?", ""}, {"", ""}},                              //timelapse 8  //menustep 33
+    {{"Sound", ""}, {"On", "Off"}},                                  //setup 9      //menustep 50
+    {{"LED", ""}, {"On", "Off"}},                                    //setup 10     //menustep 51
+    {{"Ease In/Out", ""}, {"On", "Off"}},                            //setup 11     //menustep 52
     {{"Repeat Movement", ""}, {"No", "Back & Again", "Go straight"}} //repeat 12    //menustep 70
 };
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
+
+boolean studioMode = true;
 
 //-------Input-------//
 byte keyvalue = 0;
@@ -81,7 +84,7 @@ byte activeDigit = 0;
 
 //------Motor------//
 AccelStepper stepper(HALFSTEP, motorPin1, motorPin3, motorPin2, motorPin4);
-const long stepsPerCm = 400; //dislocation of motor to wheel
+const long stepsPerCm = 400; //gear ratio of motor to wheel
 const int fullSpeed = 1000;  //maxSpeed = 2cm/s
 byte movedirection = 0;      //0=forwards, 1=backwards;
 
@@ -176,11 +179,13 @@ void printScreen()
   {
     if (menustep == 13)
     { //screen before start dolly
-      if (parameters[1] == 0) {
+      if (parameters[1] == 0)
+      {
         //TODO: make a beautiful char for forwards
         lcd.print(F("f"));
       }
-      if (parameters[1] == 1) {
+      if (parameters[1] == 1)
+      {
         //TODO: make a beautiful char for backwards
         lcd.print(F("b"));
       }
@@ -294,10 +299,10 @@ void numberInput()
   getnumber = true;
 
   //Write Parameters of Menustep to numArray to show last Values
-  numArray[3] = (parameters[lookUp(menustep)]   % 10);
-  numArray[2] = ((parameters[lookUp(menustep)]  / 10)   % 10);
-  numArray[1] = ((parameters[lookUp(menustep)]  / 100)  % 10);
-  numArray[0] = (parameters[lookUp(menustep)]   / 1000);
+  numArray[3] = (parameters[lookUp(menustep)] % 10);
+  numArray[2] = ((parameters[lookUp(menustep)] / 10) % 10);
+  numArray[1] = ((parameters[lookUp(menustep)] / 100) % 10);
+  numArray[0] = (parameters[lookUp(menustep)] / 1000);
 
   lcd.setCursor(activeDigit + 2, 1);
   lcd.blink();
@@ -379,15 +384,16 @@ byte lookUp(byte menustepInMenu)
     return 0;
 }
 
-
-void switchBacklight () {
-  if (backlightState == true) {
+void switchBacklight()
+{
+  if (backlightState == true)
+  {
     lcd.noBacklight();
     backlightState = false;
   }
-  else {
+  else
+  {
     lcd.backlight();
     backlightState = true;
   }
-
 }
