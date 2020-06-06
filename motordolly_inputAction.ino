@@ -90,10 +90,14 @@ void inputAction(int selection)
         moveDolly(parameters[1], tempparam2, tempparam3);
         if (studioMode == true)
         {
-          while (!cancel)
-          {
-            backAndAgain();
-          }
+          unsigned long preMillis = 0;
+          preMillis = millis();
+          while (!cancel) // drive until escape
+            if (millis() >= preMillis + (waitTimeStudio * 1000L))
+            { //drive after interval time
+              preMillis = millis();
+              backAndAgain();
+            }
         }
         changeMenuStep(70); //to repeatMovement
       }
@@ -211,15 +215,14 @@ void inputAction(int selection)
       if (parameters[lookUp(menustep)] == 1) // Back & Again
       {
         backAndAgain();
+        changeMenuStep(menustep);
       }
-      changeMenuStep(menustep);
-    }
-    if (parameters[lookUp(menustep)] == 2)
-    { // Go straight on
-      straightOn();
+      if (parameters[lookUp(menustep)] == 2)
+      { // Go straight on
+        straightOn();
+      }
+      break;
     }
     break;
   }
-  break;
-}
 }

@@ -74,6 +74,7 @@ const char *menuscreens[numScreens][2][3] = {
 unsigned int parameters[numScreens] = {0, 0, 3, 5, 0, 3, 15, 5, 0, 0, 0, 0, 0};
 
 boolean studioMode = true;
+byte waitTimeStudio = 250; //in seconds
 
 //-------Input-------//
 byte keyvalue = 0;
