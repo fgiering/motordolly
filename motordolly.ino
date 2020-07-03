@@ -19,6 +19,7 @@
     * TODO: Manueller TImelapse (Klick and Shot)
     * TODO: Time-controlled Timelapse or Dollyshot
     * TODO: Smooth Timelapse
+    * TODO: Update Libraries
 
     Erstellt mit:
     * Arduino Uno
