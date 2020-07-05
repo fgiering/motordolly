@@ -1,17 +1,20 @@
 {
-  "configurations": [
-    {
-      "name": "Win32",
-      "includePath": [
-        "D:\\\\Eigene Dateien\\\\Downloads\\\\Arduino\\\\arduino-1.8.12\\\\tools\\\\**",
-        "D:\\\\Eigene Dateien\\\\Downloads\\\\Arduino\\\\arduino-1.8.12\\\\hardware\\\\arduino\\\\avr\\\\**",
-        "C:\\\\Users\\\\Fabian\\\\Documents\\\\Arduino\\\\libraries\\\\**"
-      ],
-      "forcedInclude": [
-        "D:\\\\Eigene Dateien\\\\Downloads\\\\Arduino\\\\arduino-1.8.12\\\\hardware\\\\arduino\\\\avr\\\\cores\\\\arduino\\\\Arduino.h"
-      ],
-      "intelliSenseMode": "msvc-x64"
-    }
-  ],
-  "version": 4
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "D:\\Eigene Dateien\\Downloads\\Arduino\\arduino-1.8.12\\tools\\**",
+                "D:\\Eigene Dateien\\Downloads\\Arduino\\arduino-1.8.12\\hardware\\arduino\\avr\\**",
+                "C:\\Users\\Fabian\\Documents\\Arduino\\libraries\\**",
+                "C:\\Users\\Fabian\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.3\\**",
+                "C:\\Users\\Fabian\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**"
+            ],
+            "forcedInclude": [
+                "D:\\Eigene Dateien\\Downloads\\Arduino\\arduino-1.8.12\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h",
+                "C:\\Users\\Fabian\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.3\\cores\\arduino\\Arduino.h"
+            ],
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 4
 }
