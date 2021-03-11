@@ -18,6 +18,7 @@ Der Motor darf nicht über den Stromkreis vom Arduino angeschlossen werden.
 - Sound deaktivieren
 - Ease In/Out der Bewegung deaktivierbar
 - Sound Alarm, wenn Timelapse fertig
+- Studio-Modus (non-stop back and forth)
 
 ##Roadmap:
 
