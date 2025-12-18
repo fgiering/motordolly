@@ -1,15 +1,15 @@
-#Motordolly
+# Motordolly
 
-##Kurzbeschreibung:
+## Kurzbeschreibung:
 Ein motorisierter Skater-Dolly um Kamera Bewgungen wie mit einem
 Kameraroboter ausführen zu können.
 Mit Timelapse Funktion, Smoother Beschleunigung, usw.
 
-##Was man wissen muss:
+## Was man wissen muss:
 Schrittgröße muss ja nach Motor und Übersetzung geändert werden.
 Der Motor darf nicht über den Stromkreis vom Arduino angeschlossen werden.
 
-##Features:
+## Features:
 
 - Dolly Fahrten
 - Dolly Fahrten 1:1 wiederholen
@@ -20,7 +20,7 @@ Der Motor darf nicht über den Stromkreis vom Arduino angeschlossen werden.
 - Sound Alarm, wenn Timelapse fertig
 - Studio-Modus (non-stop back and forth)
 
-##Roadmap:
+## Roadmap:
 
 - TODO: Presets for Dollyshots
 - TODO: Dollyfahrt in Timelapse umrechnen
@@ -29,10 +29,8 @@ Der Motor darf nicht über den Stromkreis vom Arduino angeschlossen werden.
 - TODO: Smooth Timelapse
 - TODO: Update Libraries
 
-##Erstellt mit:
+## Erstellt mit:
 
 - Arduino Uno
 - LCD von ELEGOO
 - STEP MOTOR 288YJ-48 5V DC
-
-## ##Release Notes:
